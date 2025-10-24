@@ -1,0 +1,45 @@
+<!-- Floating button -->
+<button class="chat-toggle" (click)="toggleChat()" [class.open]="isOpen">
+  💬
+</button>
+
+<!-- Chatbot window -->
+<div class="chat-window" *ngIf="isOpen" @fadeIn>
+  <div class="chat-header">
+    <div class="header-content">
+      <div class="chatbot-icon">🤖</div>
+      <div class="header-text">
+        <h3>JOBCY Assistant</h3>
+        <span class="status">online</span>
+      </div>
+    </div>
+    <button class="close-btn" (click)="toggleChat()">✖</button>
+  </div>
+
+  <div class="chat-content" #chatBox>
+    <div *ngFor="let message of messages" class="message" [class.bot]="message.isBot">
+      {{ message.text }}
+    </div>
+
+    <div class="options-container" *ngIf="currentOptions.length">
+      <button *ngFor="let option of currentOptions" 
+              class="option-btn {{option.style}}"
+              (click)="selectOption(option)">
+        <span class="option-icon">{{option.icon}}</span>
+        <span class="option-text">{{option.text}}</span>
+      </button>
+    </div>
+
+    <!-- Back button after redirection -->
+    <div *ngIf="redirected" class="redirect-back">
+      <button (click)="goBackToChatbot()" class="btn btn-outline-secondary">
+        ⬅️ Back to chatbot
+      </button>
+    </div>
+  </div>
+
+  <div class="chat-footer">
+    <span>powered by</span>
+    <span class="brand">@JOBCY</span>
+  </div>
+</div>

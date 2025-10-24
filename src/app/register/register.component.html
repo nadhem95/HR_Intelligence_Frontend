@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-mode="light" class="scroll-smooths group" data-theme-color="violet">
+<head>
+    <meta charset="utf-8" />
+    <title>Sign Up - Jobcy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta content="Tailwind Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="" name="Themesbrand" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="assets/images/favicon.ico" />
+</head>
+
+<body class="bg-white dark:bg-neutral-800">
+    <div class="main-content">
+        <div class="page-content">
+            <section class="flex items-center justify-center min-h-screen py-10 group-data-[theme-color=violet]:bg-violet-500/10 group-data-[theme-color=sky]:bg-sky-500/10 group-data-[theme-color=red]:bg-red-500/10 group-data-[theme-color=green]:bg-green-500/10 group-data-[theme-color=pink]:bg-pink-500/10 group-data-[theme-color=blue]:bg-blue-500/10 dark:bg-neutral-700">
+                <div class="container mx-auto">
+                    <div class="grid grid-cols-12">
+                        <div class="col-span-12 lg:col-span-10 lg:col-start-2">
+                            <div class="flex flex-col bg-white rounded-lg dark:bg-neutral-800">
+                                <div class="grid flex-col grid-cols-12">
+                                    <div class="col-span-6 ltr:rounded-l-lg rtl:rounded-r-lg">
+                                        <div class="p-10">
+                                            <a href="index.html">
+                                                <img src="assets/images/logo-light.png" alt="" class="hidden mx-auto dark:block">
+                                                <img src="assets/images/logo-dark.png" alt="" class="block mx-auto dark:hidden">
+                                            </a>
+                                            <div class="mt-5">
+                                                <img src="assets/images/auth/sign-up.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-12 rounded-b-md lg:col-span-6 group-data-[theme-color=violet]:bg-violet-700 group-data-[theme-color=sky]:bg-sky-700 group-data-[theme-color=red]:bg-red-700 group-data-[theme-color=green]:bg-green-700 group-data-[theme-color=pink]:bg-pink-700 group-data-[theme-color=blue]:bg-blue-700 lg:rounded-b-none lg:ltr:rounded-r-lg rtl:rounded-l-lg">
+                                        <div class="flex flex-col justify-center h-full p-12">
+                                            <div class="text-center">
+                                                <h5 class="text-[18.5px] text-white">Let's Get Started</h5>
+                                                <p class="mt-3 text-gray-50">Sign up and get access to all the features of Jobcy</p>
+                                            </div>
+
+                                            <!-- Alert message -->
+                                            <div [innerHTML]="messageCommande" class="mt-4"></div>
+
+                                            <form (ngSubmit)="addNewCondidat()" [formGroup]="registerForm" class="mt-8">
+                                                
+                                                <!-- Photo de profil section - Enhanced -->
+                                                <div class="mb-6 text-center">
+                                                    <label class="text-white mb-3 block text-sm font-medium">Photo de profil (optionnelle)</label>
+                                                    <div class="relative inline-block">
+                                                        <div class="w-28 h-28 mx-auto mb-3 rounded-full overflow-hidden border-3 border-white/30 bg-white/10 shadow-lg">
+                                                            <img *ngIf="profileImagePreview; else defaultAvatar" 
+                                                                 [src]="profileImagePreview" 
+                                                                 alt="Profile preview" 
+                                                                 class="w-full h-full object-cover">
+                                                            <ng-template #defaultAvatar>
+                                                                <div class="w-full h-full flex items-center justify-center text-white/60">
+                                                                    <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
+                                                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                                                                    </svg>
+                                                                </div>
+                                                            </ng-template>
+                                                        </div>
+                                                        <input type="file" 
+                                                               (change)="onFileSelected($event)" 
+                                                               accept="image/*" 
+                                                               class="hidden" 
+                                                               #fileInput>
+                                                        <div class="flex justify-center space-x-2 mt-2">
+                                                            <button type="button" 
+                                                                    (click)="fileInput.click()" 
+                                                                    class="bg-white text-violet-700 px-3 py-1 rounded-full text-xs font-medium hover:bg-gray-100 transition-colors duration-200 flex items-center space-x-1">
+                                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                                                </svg>
+                                                                <span>{{ selectedFile ? 'Changer' : 'Ajouter' }}</span>
+                                                            </button>
+                                                            <button *ngIf="selectedFile" 
+                                                                    type="button" 
+                                                                    (click)="removePhoto()" 
+                                                                    class="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-medium hover:bg-red-600 transition-colors duration-200 flex items-center space-x-1">
+                                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                                                </svg>
+                                                                <span>Supprimer</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="photoError" class="text-red-300 mt-2 text-sm bg-red-500/20 px-3 py-1 rounded-md">
+                                                        <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                        </svg>
+                                                        {{photoError}}
+                                                    </div>
+                                                    <p class="text-xs text-white/70 mt-1">JPG, PNG ou GIF. Max 5MB.</p>
+                                                </div>
+
+                                                <div class="mb-5">
+                                                    <label for="nomInput" class="text-white">Last Name</label>
+                                                    <input formControlName="nom" type="text" class="w-full mt-1 group-data-[theme-color=violet]:bg-violet-400/40 group-data-[theme-color=sky]:bg-sky-400/40 group-data-[theme-color=red]:bg-red-400/40 group-data-[theme-color=green]:bg-green-400/40 group-data-[theme-color=pink]:bg-pink-400/40 group-data-[theme-color=blue]:bg-blue-400/40 py-2.5 rounded border-transparent placeholder:text-sm placeholder:text-gray-50 text-white" required="" id="nomInput" placeholder="Enter your last name">
+                                                    <div *ngIf="nom?.invalid && (nom?.dirty || nom?.touched)" class="text-red-300 mt-1 text-sm">
+                                                        <div *ngIf="nom?.errors?.['required']">Last name is required.</div>
+                                                        <div *ngIf="nom?.errors?.['minlength']">Last name must be at least 4 characters long.</div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-5">
+                                                    <label for="prenomInput" class="text-white">First Name</label>
+                                                    <input formControlName="prenom" type="text" class="w-full mt-1 group-data-[theme-color=violet]:bg-violet-400/40 group-data-[theme-color=sky]:bg-sky-400/40 group-data-[theme-color=red]:bg-red-400/40 group-data-[theme-color=green]:bg-green-400/40 group-data-[theme-color=pink]:bg-pink-400/40 group-data-[theme-color=blue]:bg-blue-400/40 py-2.5 rounded border-transparent placeholder:text-sm placeholder:text-gray-50 text-white" required="" id="prenomInput" placeholder="Enter your first name">
+                                                    <div *ngIf="prenom?.invalid && (prenom?.dirty || prenom?.touched)" class="text-red-300 mt-1 text-sm">
+                                                        <div *ngIf="prenom?.errors?.['required']">First name is required.</div>
+                                                        <div *ngIf="prenom?.errors?.['minlength']">First name must be at least 4 characters long.</div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-5">
+                                                    <label for="emailInput" class="text-white">Email</label>
+                                                    <input formControlName="email" type="email" class="w-full mt-1 group-data-[theme-color=violet]:bg-violet-400/40 group-data-[theme-color=sky]:bg-sky-400/40 group-data-[theme-color=red]:bg-red-400/40 group-data-[theme-color=green]:bg-green-400/40 group-data-[theme-color=pink]:bg-pink-400/40 group-data-[theme-color=blue]:bg-blue-400/40 py-2.5 rounded border-transparent placeholder:text-sm placeholder:text-gray-50 text-white" required="" id="emailInput" placeholder="Enter your email">
+                                                    <div *ngIf="email?.invalid && (email?.dirty || email?.touched)" class="text-red-300 mt-1 text-sm">
+                                                        <div *ngIf="email?.errors?.['required']">Email is required.</div>
+                                                        <div *ngIf="email?.errors?.['email']">Invalid email format.</div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-5">
+                                                    <label for="passwordInput" class="text-white">Password</label>
+                                                    <input formControlName="mot_de_passe" type="password" class="w-full mt-1 group-data-[theme-color=violet]:bg-violet-400/40 group-data-[theme-color=sky]:bg-sky-400/40 group-data-[theme-color=red]:bg-red-400/40 group-data-[theme-color=green]:bg-green-400/40 group-data-[theme-color=pink]:bg-pink-400/40 group-data-[theme-color=blue]:bg-blue-400/40 py-2.5 rounded border-transparent placeholder:text-sm placeholder:text-gray-50 text-white" id="passwordInput" placeholder="Enter your password">
+                                                    <div *ngIf="mot_de_passe?.invalid && (mot_de_passe?.dirty || mot_de_passe?.touched)" class="text-red-300 mt-1 text-sm">
+                                                        <div *ngIf="mot_de_passe?.errors?.['required']">Password is required.</div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-5">
+                                                    <label for="telephoneInput" class="text-white">Phone</label>
+                                                    <input formControlName="telephone" type="text" class="w-full mt-1 group-data-[theme-color=violet]:bg-violet-400/40 group-data-[theme-color=sky]:bg-sky-400/40 group-data-[theme-color=red]:bg-red-400/40 group-data-[theme-color=green]:bg-green-400/40 group-data-[theme-color=pink]:bg-pink-400/40 group-data-[theme-color=blue]:bg-blue-400/40 py-2.5 rounded border-transparent placeholder:text-sm placeholder:text-gray-50 text-white" id="telephoneInput" placeholder="Enter your phone number">
+                                                    <div *ngIf="telephone?.invalid && (telephone?.dirty || telephone?.touched)" class="text-red-300 mt-1 text-sm">
+                                                        <div *ngIf="telephone?.errors?.['required']">Phone number is required.</div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-5">
+                                                    <label for="adresseInput" class="text-white">Address</label>
+                                                    <input formControlName="adresse" type="text" class="w-full mt-1 group-data-[theme-color=violet]:bg-violet-400/40 group-data-[theme-color=sky]:bg-sky-400/40 group-data-[theme-color=red]:bg-red-400/40 group-data-[theme-color=green]:bg-green-400/40 group-data-[theme-color=pink]:bg-pink-400/40 group-data-[theme-color=blue]:bg-blue-400/40 py-2.5 rounded border-transparent placeholder:text-sm placeholder:text-gray-50 text-white" id="adresseInput" placeholder="Enter your address">
+                                                    <div *ngIf="adresse?.invalid && (adresse?.dirty || adresse?.touched)" class="text-red-300 mt-1 text-sm">
+                                                        <div *ngIf="adresse?.errors?.['required']">Address is required.</div>
+                                                    </div>
+                                                </div>
+                                                <div class="my-5 text-center">
+                                                    <button type="submit" [disabled]="!registerForm.valid" class="btn w-full bg-white text-gray-900 font-medium border-transparent hover:-translate-y-1.5 duration-500 ease disabled:opacity-70 disabled:hover:transform-none">Sign Up</button>
+                                                </div>
+                                            </form>
+                                            <div class="text-center">
+                                                <p class="text-white">Already a member? <a href="/login" class="text-white underline fw-medium"> Log In </a></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

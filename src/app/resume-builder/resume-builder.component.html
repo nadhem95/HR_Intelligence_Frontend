@@ -1,0 +1,445 @@
+<app-menu></app-menu>
+  
+<section id="about-sc">
+  <div class="container">
+    <div class="about-cnt">
+      <form [formGroup]="cvForm" class="cv-form" id="cv-form" (ngSubmit)="onSubmit()">
+        <!-- Section "About" -->
+        <div class="cv-form-blk">
+          <div class="cv-form-row-title">
+            <h3>about section</h3>
+          </div>
+          <div class="cv-form-row cv-form-row-about">
+            <div class="cols-3">
+              <div class="form-elem">
+                <label for="firstname" class="form-label">First Name</label>
+                <input formControlName="firstname" type="text" class="form-control firstname" placeholder="e.g. John">
+                <span *ngIf="cvForm.get('firstname')?.invalid && cvForm.get('firstname')?.touched" class="form-text text-danger">
+                  First name is required
+                </span>
+              </div>
+              <div class="form-elem">
+                <label for="middlename" class="form-label">Middle Name <span class="opt-text">(optional)</span></label>
+                <input formControlName="middlename" type="text" class="form-control middlename" placeholder="e.g. Herbert">
+              </div>
+              <div class="form-elem">
+                <label for="lastname" class="form-label">Last Name</label>
+                <input formControlName="lastname" type="text" class="form-control lastname" placeholder="e.g. Doe">
+                <span *ngIf="cvForm.get('lastname')?.invalid && cvForm.get('lastname')?.touched" class="form-text text-danger">
+                  Last name is required
+                </span>
+              </div>
+            </div>
+
+            <div class="cols-3">
+              <div class="form-elem">
+                <label for="image" class="form-label">Your Image</label>
+                <input formControlName="image" type="file" class="form-control image" accept="image/*" (change)="onImageChange($event)">
+              </div>
+              <div class="form-elem">
+                <label for="designation" class="form-label">Designation</label>
+                <input formControlName="designation" type="text" class="form-control designation" placeholder="e.g. Sr.Accountants">
+                <span *ngIf="cvForm.get('designation')?.invalid && cvForm.get('designation')?.touched" class="form-text text-danger">
+                  Designation is required
+                </span>
+              </div>
+              <div class="form-elem">
+                <label for="address" class="form-label">Address</label>
+                <input formControlName="address" type="text" class="form-control address" placeholder="e.g. Lake Street-23">
+                <span *ngIf="cvForm.get('address')?.invalid && cvForm.get('address')?.touched" class="form-text text-danger">
+                  Address is required
+                </span>
+              </div>
+            </div>
+
+            <div class="cols-3">
+              <div class="form-elem">
+                <label for="email" class="form-label">Email</label>
+                <input formControlName="email" type="text" class="form-control email" placeholder="e.g. johndoe@gmail.com">
+                <span *ngIf="cvForm.get('email')?.invalid && cvForm.get('email')?.touched" class="form-text text-danger">
+                  Valid email is required
+                </span>
+              </div>
+              <div class="form-elem">
+                <label for="phoneno" class="form-label">Phone No:</label>
+                <input formControlName="phoneno" type="text" class="form-control phoneno" placeholder="e.g. 456-768-798, 567.654.002">
+                <span *ngIf="cvForm.get('phoneno')?.invalid && cvForm.get('phoneno')?.touched" class="form-text text-danger">
+                  Phone number is required
+                </span>
+              </div>
+              <div class="form-elem">
+                <label for="summary" class="form-label">Summary</label>
+                <textarea formControlName="summary" class="form-control summary" placeholder="Write a brief summary about yourself"></textarea>
+                <span *ngIf="cvForm.get('summary')?.invalid && cvForm.get('summary')?.touched" class="form-text text-danger">
+                  Summary is required
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section "Achievements" -->
+        <div class="cv-form-blk">
+          <div class="cv-form-row-title">
+            <h3>achievements</h3>
+          </div>
+          <div class="row-separator repeater" formArrayName="achievements">
+            <div *ngFor="let achievement of achievements.controls; let i = index" [formGroupName]="i">
+              <div class="cv-form-row cv-form-row-achievement">
+                <div class="form-elem">
+                  <label [for]="'achievement_title_' + i" class="form-label">Title</label>
+                  <input formControlName="title" type="text" class="form-control achievement_title" [id]="'achievement_title_' + i">
+                  <span *ngIf="achievement.get('title')?.invalid && achievement.get('title')?.touched" class="form-text text-danger">
+                    Title is required
+                  </span>
+                </div>
+                <div class="form-elem">
+                  <label [for]="'achievement_description_' + i" class="form-label">Description</label>
+                  <input formControlName="description" type="text" class="form-control achievement_description" [id]="'achievement_description_' + i">
+                  <span *ngIf="achievement.get('description')?.invalid && achievement.get('description')?.touched" class="form-text text-danger">
+                    Description is required
+                  </span>
+                </div>
+                <button type="button" class="repeater-remove-btn" (click)="removeItem(achievements, i)">-</button>
+              </div>
+            </div>
+            <button type="button" class="repeater-add-btn" (click)="addAchievement()">+</button>
+          </div>
+        </div>
+
+        <!-- Section "Experiences" -->
+        <div class="cv-form-blk">
+          <div class="cv-form-row-title">
+            <h3>experiences</h3>
+          </div>
+          <div class="row-separator repeater" formArrayName="experiences">
+            <div *ngFor="let experience of experiences.controls; let i = index" [formGroupName]="i">
+              <div class="cv-form-row cv-form-row-experience">
+                <div class="cols-3">
+                  <div class="form-elem">
+                    <label [for]="'exp_title_' + i" class="form-label">Title</label>
+                    <input formControlName="title" type="text" class="form-control exp_title" [id]="'exp_title_' + i">
+                    <span *ngIf="experience.get('title')?.invalid && experience.get('title')?.touched" class="form-text text-danger">
+                      Title is required
+                    </span>
+                  </div>
+                  <div class="form-elem">
+                    <label [for]="'exp_organization_' + i" class="form-label">Company / Organization</label>
+                    <input formControlName="organization" type="text" class="form-control exp_organization" [id]="'exp_organization_' + i">
+                    <span *ngIf="experience.get('organization')?.invalid && experience.get('organization')?.touched" class="form-text text-danger">
+                      Organization is required
+                    </span>
+                  </div>
+                  <div class="form-elem">
+                    <label [for]="'exp_location_' + i" class="form-label">Location</label>
+                    <input formControlName="location" type="text" class="form-control exp_location" [id]="'exp_location_' + i">
+                  </div>
+                </div>
+
+                <div class="cols-3">
+                  <div class="form-elem">
+                    <label [for]="'exp_start_date_' + i" class="form-label">Start Date</label>
+                    <input formControlName="startDate" type="date" class="form-control exp_start_date" [id]="'exp_start_date_' + i">
+                  </div>
+                  <div class="form-elem">
+                    <label [for]="'exp_end_date_' + i" class="form-label">End Date</label>
+                    <input formControlName="endDate" type="date" class="form-control exp_end_date" [id]="'exp_end_date_' + i">
+                  </div>
+                  <div class="form-elem">
+                    <label [for]="'exp_description_' + i" class="form-label">Description</label>
+                    <textarea formControlName="description" class="form-control exp_description" [id]="'exp_description_' + i"></textarea>
+                  </div>
+                </div>
+
+                <button type="button" class="repeater-remove-btn" (click)="removeItem(experiences, i)">-</button>
+              </div>
+            </div>
+            <button type="button" class="repeater-add-btn" (click)="addExperience()">+</button>
+          </div>
+        </div>
+
+        <!-- Section "Educations" -->
+        <div class="cv-form-blk">
+          <div class="cv-form-row-title">
+            <h3>educations</h3>
+          </div>
+          <div class="row-separator repeater" formArrayName="educations">
+            <div *ngFor="let education of educations.controls; let i = index" [formGroupName]="i">
+              <div class="cv-form-row cv-form-row-education">
+                <div class="cols-3">
+                  <div class="form-elem">
+                    <label [for]="'edu_school_' + i" class="form-label">School</label>
+                    <input formControlName="school" type="text" class="form-control edu_school" [id]="'edu_school_' + i">
+                    <span *ngIf="education.get('school')?.invalid && education.get('school')?.touched" class="form-text text-danger">
+                      School is required
+                    </span>
+                  </div>
+                  <div class="form-elem">
+                    <label [for]="'edu_degree_' + i" class="form-label">Degree</label>
+                    <input formControlName="degree" type="text" class="form-control edu_degree" [id]="'edu_degree_' + i">
+                    <span *ngIf="education.get('degree')?.invalid && education.get('degree')?.touched" class="form-text text-danger">
+                      Degree is required
+                    </span>
+                  </div>
+                  <div class="form-elem">
+                    <label [for]="'edu_city_' + i" class="form-label">City</label>
+                    <input formControlName="city" type="text" class="form-control edu_city" [id]="'edu_city_' + i">
+                  </div>
+                </div>
+
+                <div class="cols-3">
+                  <div class="form-elem">
+                    <label [for]="'edu_start_date_' + i" class="form-label">Start Date</label>
+                    <input formControlName="startDate" type="date" class="form-control edu_start_date" [id]="'edu_start_date_' + i">
+                  </div>
+                  <div class="form-elem">
+                    <label [for]="'edu_graduation_date_' + i" class="form-label">End Date</label>
+                    <input formControlName="graduationDate" type="date" class="form-control edu_graduation_date" [id]="'edu_graduation_date_' + i">
+                  </div>
+                  <div class="form-elem">
+                    <label [for]="'edu_description_' + i" class="form-label">Description</label>
+                    <textarea formControlName="description" class="form-control edu_description" [id]="'edu_description_' + i"></textarea>
+                  </div>
+                </div>
+
+                <button type="button" class="repeater-remove-btn" (click)="removeItem(educations, i)">-</button>
+              </div>
+            </div>
+            <button type="button" class="repeater-add-btn" (click)="addEducation()">+</button>
+          </div>
+        </div>
+
+        <!-- Section "Projects" -->
+        <div class="cv-form-blk">
+          <div class="cv-form-row-title">
+            <h3>projects</h3>
+          </div>
+          <div class="row-separator repeater" formArrayName="projects">
+            <div *ngFor="let project of projects.controls; let i = index" [formGroupName]="i">
+              <div class="cv-form-row cv-form-row-experience">
+                <div class="cols-3">
+                  <div class="form-elem">
+                    <label [for]="'proj_title_' + i" class="form-label">Project Name</label>
+                    <input formControlName="title" type="text" class="form-control proj_title" [id]="'proj_title_' + i">
+                    <span *ngIf="project.get('title')?.invalid && project.get('title')?.touched" class="form-text text-danger">
+                      Title is required
+                    </span>
+                  </div>
+                  <div class="form-elem">
+                    <label [for]="'proj_link_' + i" class="form-label">Project link</label>
+                    <input formControlName="link" type="text" class="form-control proj_link" [id]="'proj_link_' + i">
+                  </div>
+                  <div class="form-elem">
+                    <label [for]="'proj_description_' + i" class="form-label">Description</label>
+                    <textarea formControlName="description" class="form-control proj_description" [id]="'proj_description_' + i"></textarea>
+                  </div>
+                </div>
+                <button type="button" class="repeater-remove-btn" (click)="removeItem(projects, i)">-</button>
+              </div>
+            </div>
+            <button type="button" class="repeater-add-btn" (click)="addProject()">+</button>
+          </div>
+        </div>
+
+        <!-- Section "Skills" -->
+        <div class="cv-form-blk">
+          <div class="cv-form-row-title">
+            <h3>skills</h3>
+          </div>
+          <div class="row-separator repeater" formArrayName="skills">
+            <div *ngFor="let skill of skills.controls; let i = index" [formGroupName]="i">
+              <div class="cv-form-row cv-form-row-skills">
+                <div class="form-elem">
+                  <label [for]="'skill_' + i" class="form-label">Skill</label>
+                  <input formControlName="skill" type="text" class="form-control skill" [id]="'skill_' + i">
+                  <span *ngIf="skill.get('skill')?.invalid && skill.get('skill')?.touched" class="form-text text-danger">
+                    Skill is required
+                  </span>
+                </div>
+                <button type="button" class="repeater-remove-btn" (click)="removeItem(skills, i)">-</button>
+              </div>
+            </div>
+            <button type="button" class="repeater-add-btn" (click)="addSkill()">+</button>
+          </div>
+        </div>
+
+        <!-- New Section "Digital Signature" -->
+        <div class="cv-form-blk">
+          <div class="cv-form-row-title">
+            <h3>digital signature</h3>
+          </div>
+          <div class="cv-form-row cv-form-row-signature">
+            <div class="form-elem">
+              <div class="signature-option">
+                <label class="form-label">Include Digital Signature</label>
+                <div class="toggle-switch">
+                  <input type="checkbox" id="includeSignature" formControlName="includeSignature" (change)="toggleSignature()">
+                  <label for="includeSignature" class="toggle-label"></label>
+                </div>
+              </div>
+              <p class="signature-info">
+                Digital signature verifies that this CV was created with our CV builder.
+                It helps employers verify the authenticity of your resume.
+              </p>
+              <div *ngIf="showSignature" class="signature-preview">
+                <div class="signature-box">
+                  <div class="signature-content">
+                    <div class="signature-text">
+                      <span class="signature-code">{{ generatedSignature }}</span>
+                      <span class="signature-date">{{ signatureDate }}</span>
+                    </div>
+                    <div class="signature-stamp">
+                      <svg viewBox="0 0 100 100" width="40" height="40">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="#3498db" stroke-width="2"></circle>
+                        <path d="M 30 50 L 45 65 L 70 35" fill="none" stroke="#3498db" stroke-width="3"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CV Preview Section -->
+<section id="preview-sc" class="print_area">
+  <div class="container">
+    <div class="preview-cnt cv-content">
+      <div class="preview-cnt-l bg-green text-white">
+        <div class="preview-blk">
+          <div class="preview-image">
+            <img [src]="imagePreview || ''" alt="" id="image_dsp">
+          </div>
+          <div class="preview-item preview-item-name">
+            <span class="preview-item-val fw-6" id="fullname_dsp">{{ cvForm.value.firstname }} {{ cvForm.value.lastname }}</span>
+          </div>
+          <div class="preview-item">
+            <span class="preview-item-val text-uppercase fw-6 ls-1" id="designation_dsp">{{ cvForm.value.designation }}</span>
+          </div>
+        </div>
+
+        <div class="preview-blk">
+          <div class="preview-blk-title">
+            <h3>about</h3>
+          </div>
+          <div class="preview-blk-list">
+            <div class="preview-item">
+              <span class="preview-item-val" id="phoneno_dsp">{{ cvForm.value.phoneno }}</span>
+            </div>
+            <div class="preview-item">
+              <span class="preview-item-val" id="email_dsp">{{ cvForm.value.email }}</span>
+            </div>
+            <div class="preview-item">
+              <span class="preview-item-val" id="address_dsp">{{ cvForm.value.address }}</span>
+            </div>
+            <div class="preview-item">
+              <span class="preview-item-val" id="summary_dsp">{{ cvForm.value.summary }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-blk">
+          <div class="preview-blk-title">
+            <h3>skills</h3>
+          </div>
+          <div class="preview-blk-list">
+            <div *ngFor="let skill of cvForm.value.skills" class="preview-item">
+              <span class="preview-item-val">{{ skill.skill }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-cnt-r bg-white">
+        <div class="preview-blk">
+          <div class="preview-blk-title">
+            <h3>achievements</h3>
+          </div>
+          <div class="preview-blk-list">
+            <div *ngFor="let achievement of cvForm.value.achievements" class="preview-item">
+              <span class="preview-item-val">{{ achievement.title }}</span>
+              <span class="preview-item-val">{{ achievement.description }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-blk">
+          <div class="preview-blk-title">
+            <h3>educations</h3>
+          </div>
+          <div class="preview-blk-list">
+            <div *ngFor="let education of cvForm.value.educations" class="preview-item">
+              <span class="preview-item-val">{{ education.degree }} at {{ education.school }}</span>
+              <span class="preview-item-val">{{ education.startDate }} - {{ education.graduationDate }}</span>
+              <span class="preview-item-val">{{ education.description }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-blk">
+          <div class="preview-blk-title">
+            <h3>experiences</h3>
+          </div>
+          <div class="preview-blk-list">
+            <div *ngFor="let experience of cvForm.value.experiences" class="preview-item">
+              <span class="preview-item-val">{{ experience.title }} at {{ experience.organization }}</span>
+              <span class="preview-item-val">{{ experience.startDate }} - {{ experience.endDate }}</span>
+              <span class="preview-item-val">{{ experience.description }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-blk">
+          <div class="preview-blk-title">
+            <h3>projects</h3>
+          </div>
+          <div class="preview-blk-list">
+            <div *ngFor="let project of cvForm.value.projects" class="preview-item">
+              <span class="preview-item-val">{{ project.title }}</span>
+              <span class="preview-item-val">{{ project.link }}</span>
+              <span class="preview-item-val">{{ project.description }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Digital Signature Display -->
+        <div class="verification-section" *ngIf="showSignature">
+          <h3>VERIFICATION</h3>
+          <div class="signature-box">
+            <div class="signature-content">
+              <h4>Digital Verification</h4>
+              <div class="signature-details">
+                <p><strong>Date:</strong> {{ signatureDate }}</p>
+                <p><strong>Authentication Code:</strong> {{ generatedSignature }}</p>
+                <p class="signature-note">Created with CV Builder</p>
+                <div class="signature-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="#4caf50" stroke-width="2" fill="none"/>
+                    <path d="M8 12L11 15L16 9" stroke="#4caf50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <p class="verify-text">Verify this CV at verify.cvbuilder.com</p>
+              </div>
+            </div>
+          </div>
+        </div>
+         <!-- Print/Download Button Section -->
+  <section class="print-btn-sc">
+  <div class="container">
+    <button type="button" class="print-btn btn btn-primary" (click)="printCV()">Download CV</button>
+    <button type="button" class="download-btn btn btn-success" (click)="downloadPDFWithSignature()">Download PDF</button>
+  </div>
+</section>
+      </div>
+      
+    </div>
+    
+  </div>
+ 
+</section>

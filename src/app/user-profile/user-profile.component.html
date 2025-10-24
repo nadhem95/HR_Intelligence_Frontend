@@ -1,0 +1,122 @@
+<app-menu></app-menu>
+<div class="profile-container">
+  <!-- Alert messages -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div class="card">
+    <!-- Card header -->
+    <div class="card-header">
+      <h2 class="card-title">My Profile</h2>
+      <div class="profile-actions">
+        <button *ngIf="!editMode" class="btn btn-primary" (click)="toggleEditMode()">
+          <i class="fa fa-edit"></i> Edit
+        </button>
+      </div>
+    </div>
+
+    <!-- Card body -->
+    <div class="card-body">
+      <!-- View mode -->
+      <div *ngIf="!editMode" class="profile-info">
+        <div class="profile-avatar">
+          <img [src]="photoUrl" alt="Profile Photo" class="avatar-image">
+        </div>
+
+        <div class="profile-details">
+          <div class="info-group">
+            <div class="info-label">Last Name:</div>
+            <div class="info-value">{{ candidat.nom }}</div>
+          </div>
+
+          <div class="info-group">
+            <div class="info-label">First Name:</div>
+            <div class="info-value">{{ candidat.prenom }}</div>
+          </div>
+
+          <div class="info-group">
+            <div class="info-label">Email:</div>
+            <div class="info-value">{{ candidat.email }}</div>
+          </div>
+
+          <div class="info-group">
+            <div class="info-label">Phone:</div>
+            <div class="info-value">{{ candidat.telephone }}</div>
+          </div>
+
+          <div class="info-group">
+            <div class="info-label">Address:</div>
+            <div class="info-value">{{ candidat.adresse }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit mode -->
+      <div *ngIf="editMode" class="profile-edit">
+        <form [formGroup]="profileForm" (ngSubmit)="saveChanges()">
+          <div class="form-group">
+            <label>Profile Photo</label>
+            <div class="avatar-edit">
+              <img [src]="photoUrl" alt="Current Photo" class="avatar-preview">
+              <input type="file" id="photo" accept="image/*" (change)="onFileSelected($event)" class="form-control-file">
+              <small class="form-text text-muted">Max size 5MB (JPEG, PNG)</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="nom">Last Name</label>
+            <input type="text" id="nom" class="form-control" formControlName="nom">
+            <div *ngIf="profileForm.get('nom')?.invalid && profileForm.get('nom')?.touched" class="text-danger">
+              Last name is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="prenom">First Name</label>
+            <input type="text" id="prenom" class="form-control" formControlName="prenom">
+            <div *ngIf="profileForm.get('prenom')?.invalid && profileForm.get('prenom')?.touched" class="text-danger">
+              First name is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" class="form-control" formControlName="email">
+            <div *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" class="text-danger">
+              A valid email is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="telephone">Phone</label>
+            <input type="tel" id="telephone" class="form-control" formControlName="telephone">
+            <div *ngIf="profileForm.get('telephone')?.invalid && profileForm.get('telephone')?.touched" class="text-danger">
+              Phone number is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="adresse">Address</label>
+            <textarea id="adresse" class="form-control" formControlName="adresse"></textarea>
+            <div *ngIf="profileForm.get('adresse')?.invalid && profileForm.get('adresse')?.touched" class="text-danger">
+              Address is required
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-success" [disabled]="profileForm.invalid">
+              <i class="fa fa-save"></i> Save
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="toggleEditMode()">
+              <i class="fa fa-times"></i> Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

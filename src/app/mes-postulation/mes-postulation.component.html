@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EmploiNova- Job Board HTML Template</title>
+</head>
+
+<body>
+    <div id="preloader">
+        <div class="preloader"><span></span><span></span></div>
+    </div>
+    <div id="main-wrapper">
+        <!-- Start Navigation -->
+        <app-menu></app-menu>
+        <!-- End Navigation -->
+        <div class="clearfix"></div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="postulations-dashboard">
+          <div class="page-header">
+            <div class="container">
+              <div class="header-content">
+                <h1>My Applications</h1>
+                <p class="subtitle">Track and manage all your job applications in one place</p>
+              </div>
+              
+              <div class="stats-summary">
+                <div class="stat-item pending">
+                  <div class="stat-value">{{getPendingCount()}}</div>
+                  <div class="stat-label">Pending</div>
+                  <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                </div>
+                
+                <div class="stat-item interview">
+                  <div class="stat-value">{{getAcceptedCount()}}</div>
+                  <div class="stat-label">Interviews</div>
+                  <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                </div>
+                
+                <div class="stat-item rejected">
+                  <div class="stat-value">{{getRejectedCount()}}</div>
+                  <div class="stat-label">Rejected</div>
+                  <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+                </div>
+                
+                <div class="stat-item total">
+                  <div class="stat-value">{{listepostulation.length}}</div>
+                  <div class="stat-label">Total</div>
+                  <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+          <!-- Main Content -->
+          <div class="container">
+            <!-- Filters -->
+            <div class="filters-container">
+              <div class="search-bar">
+                <input type="text" placeholder="Search for an application..." [(ngModel)]="searchTerm" (keyup)="applyFilters()">
+                <i class="fas fa-search"></i>
+              </div>
+              <div class="filter-options">
+                <select [(ngModel)]="statusFilter" (change)="applyFilters()">
+                  <option value="all">All statuses</option>
+<option value="pending">Pending</option>
+<option value="interview">Interview</option>
+<option value="rejected">Rejected</option>
+
+                </select>
+                <select [(ngModel)]="sortOption" (change)="applyFilters()">
+                  <option value="date-desc">Plus récentes</option>
+                  <option value="date-asc">Plus anciennes</option>
+                  <option value="score-desc">Score CV ↓</option>
+                  <option value="score-asc">Score CV ↑</option>
+                </select>
+              </div>
+            </div>
+        
+            <!-- No Results Message -->
+            <div class="no-results" *ngIf="filteredPostulations.length === 0">
+              <div class="empty-state">
+                <i class="fas fa-search fa-3x"></i>
+                <h3>Aucune postulation trouvée</h3>
+                <p>Modifiez vos filtres ou essayez une autre recherche</p>
+              </div>
+            </div>
+        
+            <!-- Applications Grid -->
+            <div class="postulations-grid" *ngIf="filteredPostulations.length > 0">
+              <div class="postulation-card" *ngFor="let postulation of filteredPostulations">
+                <div class="card-status" [ngClass]="'status-' + postulation?.status?.toLowerCase()">
+                  <span class="status-text">{{getStatusText(postulation?.status)}}</span>
+                </div>
+                
+                <div class="card-header">
+                  <div class="company-logo" *ngIf="postulation?.offre?.logoUrl">
+                    <img [src]="postulation?.offre?.logoUrl" alt="Logo entreprise">
+                  </div>
+                  <div class="company-logo placeholder" *ngIf="!postulation?.offre?.logoUrl">
+                    <span>{{getCompanyInitials(postulation?.offre?.nomSoc)}}</span>
+                  </div>
+                  <div class="job-details">
+                    <h3 class="job-title">{{postulation?.offre?.nomSoc}}</h3>
+                    <h4 class="company-name">{{postulation?.offre?.specialite}}</h4>
+                    <div class="location">
+                      <i class="fas fa-map-marker-alt"></i>
+                      <span>{{postulation?.offre?.ville}}, {{postulation?.offre?.adresse}}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="card-body">
+                  <div class="application-info">
+                    <div class="info-item">
+                      <span class="info-label">Date de postulation</span>
+                      <span class="info-value">{{postulation?.datePostulation | date:'dd/MM/yyyy'}}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">Score CV</span>
+                      <div class="score-container">
+                        <div class="score-bar">
+                          <div class="score-progress" [attr.data-width]="postulation?.scoreCV || postulation?.totalScore || 0" 
+                               [ngClass]="getScoreClass(postulation?.scoreCV || postulation?.totalScore)"></div>
+                        </div>
+                        <span class="score-badge" [ngClass]="getScoreBadgeClass(postulation?.scoreCV || postulation?.totalScore)">
+                          {{(postulation?.scoreCV || postulation?.totalScore || 0) | number:'1.0-0'}}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Update the card footer to include the Book Interview button -->
+      <div class="card-footer">
+  <button class="btn btn-primary" (click)="downloadCV(postulation)" [disabled]="!postulation?.cv">
+    <i class="fas fa-download"></i> CV
+  </button>
+  <button class="btn btn-success" (click)="bookInterview(postulation)" *ngIf="postulation?.status?.toLowerCase() === 'interview'">
+    <i class="fas fa-calendar-check"></i> Interview
+  </button>
+  <button class="btn btn-danger" (click)="cancelPostulation(postulation)">
+    <i class="fas fa-times"></i> Cancel
+  </button>
+</div>
+              </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination-container" *ngIf="totalPages > 1">
+              <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <div class="page-numbers">
+                <ng-container *ngFor="let page of getPageNumbers()">
+                  <button *ngIf="page !== null" class="page-btn" 
+                    [ngClass]="{'active': page === currentPage}"
+                    (click)="goToPage(page)">
+                    {{page}}
+                  </button>
+                  <span *ngIf="page === null" class="page-ellipsis">...</span>
+                </ng-container>
+              </div>
+              <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Details Modal -->
+        <div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeDetailsModal()">
+          <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+              <h2 class="modal-title">Détails de la postulation</h2>
+              <button class="close-btn" (click)="closeDetailsModal()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="modal-body" *ngIf="selectedPostulation">
+              <div class="modal-info-section">
+                <div class="company-job-details">
+                  <div class="modal-company-logo" *ngIf="selectedPostulation?.offre?.logoUrl">
+                    <img [src]="selectedPostulation?.offre?.logoUrl" alt="Logo entreprise">
+                  </div>
+                  <div class="modal-company-logo placeholder" *ngIf="!selectedPostulation?.offre?.logoUrl">
+                    <span>{{getCompanyInitials(selectedPostulation?.offre?.nomSoc)}}</span>
+                  </div>
+                  <div>
+                    <h3 class="modal-job-title">{{selectedPostulation?.offre?.titre || 'Poste non spécifié'}}</h3>
+                    <h4 class="modal-company-name">{{selectedPostulation?.offre?.nomSoc}}</h4>
+                    <div class="modal-location">
+                      <i class="fas fa-map-marker-alt"></i>
+                      <span>{{selectedPostulation?.offre?.ville}}, {{selectedPostulation?.offre?.adresse}}</span>
+                    </div>
+                  </div>
+                  <div class="modal-status" [ngClass]="'status-' + selectedPostulation?.status?.toLowerCase()">
+                    {{getStatusText(selectedPostulation?.status)}}
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal-info-grid">
+                <div class="modal-info-item">
+                  <span class="modal-info-label">Date de postulation</span>
+                  <span class="modal-info-value"> {{selectedPostulation?.datePostulation | date:'dd/MM/yyyy'}}</span>
+                </div>
+                <div class="modal-info-item">
+                  <span class="modal-info-label">Date d'analyse</span>
+                  <span class="modal-info-value"> {{selectedPostulation?.analysisDate | date:'dd/MM/yyyy HH:mm'}}</span>
+                </div>
+                <div class="modal-info-item">
+                  <span class="modal-info-label">Score CV</span>
+                  <span class="modal-info-value score-value" 
+                        [ngClass]="getScoreBadgeClass(selectedPostulation?.scoreCV || selectedPostulation?.totalScore)">
+                    {{(selectedPostulation?.scoreCV || selectedPostulation?.totalScore || 0) | number:'1.0-0'}}%
+                  </span>
+                </div>
+                <div class="modal-info-item">
+                  <span class="modal-info-label">Années d'expérience</span>
+                  <span class="modal-info-value"> {{selectedPostulation?.experienceYears || 'Non spécifié'}}</span>
+                </div>
+                <div class="modal-info-item">
+                  <span class="modal-info-label">Expérience requise</span>
+                  <span class="modal-info-value"> {{selectedPostulation?.requiredExperience || 'Non spécifié'}}</span>
+                </div>
+                <div class="modal-info-item">
+                  <span class="modal-info-label">Niveau d'éducation</span>
+                  <span class="modal-info-value"> {{selectedPostulation?.educationLevel || 'Non spécifié'}}</span>
+                </div>
+              </div>
+
+             <!-- Chart Image Section -->
+<div class="modal-chart-section" *ngIf="getChartImage(selectedPostulation)">
+  <h3 class="modal-section-title">Graphique d'analyse</h3>
+  <div class="modal-chart-container">
+    <img [src]="'data:image/png;base64,' + getChartImage(selectedPostulation)" alt="Graphique d'analyse" class="chart-image">
+  </div>
+</div>
+
+
+              <!-- Skills Match Section -->
+              <div class="modal-skills-section">
+                <div class="modal-matched-skills" *ngIf="getMatchedSkills(selectedPostulation).length > 0">
+                  <h3 class="modal-section-title">Compétences correspondantes</h3>
+                  <div class="skills-list">
+                    <span class="skill-tag matched" *ngFor="let skill of getMatchedSkills(selectedPostulation)">
+                      <i class="fas fa-check-circle"></i> {{skill}}
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="modal-missing-skills" *ngIf="getMissingSkills(selectedPostulation).length > 0">
+                  <h3 class="modal-section-title">Compétences manquantes</h3>
+                  <div class="skills-list">
+                    <span class="skill-tag missing" *ngFor="let skill of getMissingSkills(selectedPostulation)">
+                      <i class="fas fa-times-circle"></i> {{skill}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-outline" (click)="closeDetailsModal()">
+                <i class="fas fa-times"></i> Fermer
+              </button>
+              <button class="btn btn-primary" (click)="downloadCV(selectedPostulation)" [disabled]="!selectedPostulation?.cv">
+                <i class="fas fa-download"></i> Télécharger CV
+              </button>
+            </div>
+          </div>
+        </div>
+    </div>
+    <!-- Add Interview Calendar Modal -->
+<div class="modal-overlay" *ngIf="showInterviewModal" (click)="closeInterviewModal()">
+  <div class="modal-content interview-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Schedule an Interview</h2>
+      <button class="close-btn" (click)="closeInterviewModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+
+      <div class="calendar-section">
+        <h3 class="calendar-title">Available Interview Dates</h3>
+        <p class="calendar-info">Please select a date for your interview</p>
+        
+        <div class="month-navigation">
+          <button class="nav-btn" (click)="previousMonth()">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <h4 class="month-title">{{currentMonthName}} {{currentYear}}</h4>
+          <button class="nav-btn" (click)="nextMonth()">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        
+        <div class="calendar">
+          <div class="calendar-header">
+            <div class="day-name">Sun</div>
+            <div class="day-name">Mon</div>
+            <div class="day-name">Tue</div>
+            <div class="day-name">Wed</div>
+            <div class="day-name">Thu</div>
+            <div class="day-name">Fri</div>
+            <div class="day-name">Sat</div>
+          </div>
+          <div class="calendar-grid">
+            <div *ngFor="let day of calendarDays" 
+                 class="calendar-day" 
+                 [ngClass]="{
+                   'empty': !day.date,
+                   'available': day.available,
+                   'unavailable': day.date && !day.available,
+                   'selected': isDateSelected(day.date),
+                   'weekend': day.isWeekend
+                 }"
+                 (click)="selectInterviewDate(day)">
+              <span class="day-number">{{day.date ? day.date.getDate() : ''}}</span>
+              <span class="availability-indicator" *ngIf="day.available">Available</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="time-slots" *ngIf="selectedDate">
+          <h4 class="time-slots-title">Available Time Slots for {{selectedDate | date:'dd/MM/yyyy'}}</h4>
+          <div class="time-slots-grid">
+            <button *ngFor="let slot of availableTimeSlots" 
+                    class="time-slot-btn"
+                    [ngClass]="{'selected': selectedTimeSlot === slot}"
+                    (click)="selectTimeSlot(slot)">
+              {{slot}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="closeInterviewModal()">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+      <button class="btn-confirm-interview" 
+        [disabled]="!selectedDate || !selectedTimeSlot" 
+        (click)="confirmInterview()">
+        <i class="fas fa-check"></i> Confirm Interview
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Interview Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showConfirmationModal" (click)="closeConfirmationModal()">
+  <div class="modal-content confirmation-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Interview Confirmation</h2>
+      <button class="close-btn" (click)="closeConfirmationModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="confirmation-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h3 class="confirmation-title">Interview Confirmed</h3>
+      <div class="confirmation-details">
+        <p><strong>Company:</strong> {{selectedPostulation?.offre?.nomSoc}}</p>
+        <p><strong>Date:</strong> {{selectedDate | date:'dd/MM/yyyy'}}</p>
+        <p><strong>Time:</strong> {{selectedTimeSlot}}</p>
+        <p><strong>Interview Type:</strong> Videoconference</p>
+      </div>
+    </div>
+  </div>
+</div>

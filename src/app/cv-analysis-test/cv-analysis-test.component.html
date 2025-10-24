@@ -1,0 +1,175 @@
+<div class="container mt-4">
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h3>CV Analysis ML Testing Tool</h3>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="testForm" (ngSubmit)="onSubmit()">
+          <!-- CV Upload/Input Section -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                  <a class="nav-link" [ngClass]="{'active': activeTab === 'upload'}" 
+                     (click)="switchTab('upload')" href="javascript:void(0)">Upload CV</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" [ngClass]="{'active': activeTab === 'text'}" 
+                     (click)="switchTab('text')" href="javascript:void(0)">Paste CV Text</a>
+                </li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <div *ngIf="activeTab === 'upload'">
+                <div class="mb-3">
+                  <label for="cvFile" class="form-label">Upload CV (PDF format)</label>
+                  <div class="input-group">
+                    <input type="file" class="form-control" id="cvFile" accept=".pdf" 
+                           (change)="onFileSelected($event)">
+                  </div>
+                  <div *ngIf="fileSelected" class="mt-2">
+                    <span class="badge bg-success">File selected: {{ selectedFileName }}</span>
+                  </div>
+                  <div *ngIf="cvText" class="mt-3">
+                    <div class="alert alert-info">
+                      <strong>Extracted text preview:</strong>
+                      <div class="mt-2 extracted-text">{{ cvText.substring(0, 200) }}...</div>
+                      <small>Showing first 200 characters only. Full text will be analyzed.</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="activeTab === 'text'">
+                <div class="mb-3">
+                  <label for="manualCvText" class="form-label">Paste CV Text</label>
+                  <textarea class="form-control" id="manualCvText" rows="6"
+                            formControlName="manualCvText" placeholder="Copy and paste the CV text here..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Job Requirements Section -->
+          <div class="card mb-4">
+            <div class="card-header bg-light">
+              <h5 class="mb-0">Job Requirements</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label for="jobDescription" class="form-label">Job Description</label>
+                <textarea class="form-control" id="jobDescription" rows="4"
+                          formControlName="jobDescription" placeholder="Enter the job description here..."></textarea>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label">Required Skills</label>
+                <div formArrayName="skills">
+                  <div class="row mb-2" *ngFor="let skill of skills.controls; let i = index">
+                    <div class="col-10">
+                      <input type="text" class="form-control" [formControlName]="i" placeholder="Skill name">
+                    </div>
+                    <div class="col-2">
+                      <button type="button" class="btn btn-outline-danger" (click)="removeSkill(i)">
+                        <i class="bi bi-trash"></i> Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-primary mt-2" (click)="addSkill()">
+                  <i class="bi bi-plus-circle"></i> Add Skill
+                </button>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Action Buttons -->
+          <div class="d-flex justify-content-between mb-4">
+            <button type="button" class="btn btn-outline-secondary" (click)="clearForm()">
+              <i class="bi bi-x-circle"></i> Clear Form
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="loading">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <i *ngIf="!loading" class="bi bi-search"></i> Analyze CV
+            </button>
+          </div>
+        </form>
+  
+        <!-- Results Section -->
+        <div *ngIf="analysisResult" class="results-section">
+          <div class="card">
+            <div class="card-header bg-success text-white">
+              <h4 class="mb-0">Analysis Results</h4>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="alert alert-primary">
+                    <h5 class="alert-heading">Overall Score</h5>
+                    <h2>{{ analysisResult.total_score }}/100</h2>
+                  </div>
+                  
+                  <h5 class="mt-4">Score Breakdown</h5>
+                  <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Job Description Match
+                      <span class="badge bg-primary rounded-pill">{{ analysisResult.components.job_similarity }}%</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Skills Match
+                      <span class="badge bg-success rounded-pill">{{ analysisResult.components.skills_match }}%</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Experience
+                      <span class="badge bg-danger rounded-pill">{{ analysisResult.components.experience }}%</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Education
+                      <span class="badge bg-warning rounded-pill">{{ analysisResult.components.education }}%</span>
+                    </li>
+                  </ul>
+                  
+                  <div class="mt-4">
+                    <h5>Experience & Education</h5>
+                    <p><strong>Years of Experience:</strong> {{ analysisResult.experience_years }}</p>
+                    <p><strong>Education Level:</strong> {{ analysisResult.education_level }}/4</p>
+                    <small class="text-muted">
+                      Education Level: 0=High School, 1=Associate's, 2=Bachelor's, 3=Master's, 4=PhD
+                    </small>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div *ngIf="chartImage" [innerHTML]="chartImage"></div>
+                  
+                  <div class="mt-4">
+                    <h5>Skills Assessment</h5>
+                    <div class="matched-skills mb-3">
+                      <h6>Matched Skills ({{ analysisResult.matched_skills.length }})</h6>
+                      <div *ngIf="analysisResult.matched_skills.length > 0">
+                        <span *ngFor="let skill of analysisResult.matched_skills" 
+                              class="badge bg-success me-2 mb-2">{{ skill }}</span>
+                      </div>
+                      <div *ngIf="analysisResult.matched_skills.length === 0" class="text-muted">
+                        No skills matched
+                      </div>
+                    </div>
+                    
+                    <div class="missing-skills">
+                      <h6>Missing Skills ({{ analysisResult.missing_skills.length }})</h6>
+                      <div *ngIf="analysisResult.missing_skills.length > 0">
+                        <span *ngFor="let skill of analysisResult.missing_skills" 
+                              class="badge bg-danger me-2 mb-2">{{ skill }}</span>
+                      </div>
+                      <div *ngIf="analysisResult.missing_skills.length === 0" class="text-muted">
+                        No missing skills - perfect match!
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
