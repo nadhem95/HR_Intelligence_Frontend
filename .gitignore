@@ -40,3 +40,23 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Environment files (security)
+src/app/environments/environment.ts
+src/app/environments/environment.prod.ts
+.env
+*.env
+*.local
+
+# Node dependencies and build outputs
+node_modules/
+dist/
+build/
+tmp/
+
+# IDEs & system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
